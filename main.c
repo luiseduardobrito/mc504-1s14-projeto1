@@ -25,9 +25,14 @@ int main() {
 	// Inicializa quadro com zeros
 	for (i = 0; i < BSIZE; i++)
 		for (j = 0; j < BSIZE; j++)
-			board[i][j] = 0;
+			scanf("%d ", &board[i][j]);
 
 	print_board(board);
+
+	if(check(board))
+		printf("\n\n valido");
+	else
+		printf("\n\n invalido");
 
 	return 0;
 }
