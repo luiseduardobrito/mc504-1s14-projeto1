@@ -1,38 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "src/const.h"
+#include "src/checker.h"
+#include "src/solver.h"
 
-void print_board(int board[BSIZE][BSIZE]) {
+int puzzle[BSIZE][BSIZE];
 
-	int i, j;
-
-	for (i = 0; i < BSIZE; i++) {
-
+void printBoard(int board[9][9]) {
+	int row, col;
+	for (row = 1; row < 10; ++row) {
+		for (col = 1; col < 10; ++col) {
+			if (board[row - 1][col - 1] < 10) {
+				printf("%d ", board[row - 1][col - 1]);
+			} else {
+				printf("(%d) ", board[row - 1][col - 1]);
+			}
+		}
 		printf("\n");
-
-		for (j = 0; j < BSIZE; j++)
-			printf("%d ", board[i][j]);
 	}
+
 }
 
 int main() {
 
-	int i, j;
+	int puzzle[BSIZE][BSIZE], i, j;
 
-	int board[BSIZE][BSIZE];
+	for(i = 0; i < BSIZE; i++)
+		for(j = 0; j < BSIZE; j++)
+			scanf("%d", &puzzle[i][j]);
 
-	// Inicializa quadro com zeros
-	for (i = 0; i < BSIZE; i++)
-		for (j = 0; j < BSIZE; j++)
-			scanf("%d ", &board[i][j]);
+	if(!solve_sudoku(puzzle, 0 , 0)) {
+		printf("\n\n fudeu");
+	}
 
-	print_board(board);
-
-	if(check(board))
-		printf("\n\n valido");
-	else
-		printf("\n\n invalido");
+	else {
+		printBoard(puzzle);
+	}
 
 	return 0;
 }
+

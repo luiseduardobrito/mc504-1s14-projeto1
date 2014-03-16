@@ -12,13 +12,13 @@
 #ifndef CHECKER_H_
 #define CHECKER_H_
 
-int check(int board[BSIZE][BSIZE]);
+void check_board(int puzzle[BSIZE][BSIZE]);
 
-int check_lines(int board[BSIZE][BSIZE]);
+void check_lines(int puzzle[BSIZE][BSIZE]);
 
-int check_columns(int board[BSIZE][BSIZE]);
+void check_columns(int puzzle[BSIZE][BSIZE]);
 
-int check_blocks(int board[BSIZE][BSIZE]);
+void check_blocks(int puzzle[BSIZE][BSIZE]);
 
 void* check_line_thr(void* line[BSIZE]);
 

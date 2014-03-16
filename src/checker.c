@@ -1,7 +1,7 @@
 /*
  * checker.c
  *
- *  Created on: Mar 9, 2014
+ *  Created on: Mar BSIZE, 2014
  *      Author: luiseduardobrito
  */
 
@@ -14,73 +14,105 @@
 
 pthread_t thr_lines[BSIZE];
 
-int check(int board[BSIZE][BSIZE]) {
-
-	if(!check_lines(board))
-		return FALSE;
-
-//	if(!check_columns(board))
-//		return FALSE;
-//
-//	if(!check_blocks(board))
-//		return FALSE;
-
-	return TRUE;
+void check_board(int puzzle[BSIZE][BSIZE]) {
+	check_lines(puzzle);
+	check_columns(puzzle);
+	check_blocks(puzzle);
 }
 
-int check_lines(int board[BSIZE][BSIZE]) {
+int partition(int a[], int l, int r) {
+	int pivot, i, j, t;
+	pivot = a[l];
+	i = l;
+	j = r + 1;
+
+	while (1) {
+		do
+			++i;
+		while (a[i] <= pivot && i <= r);
+		do
+			--j;
+		while (a[j] > pivot);
+		if (i >= j)
+			break;
+		t = a[i];
+		a[i] = a[j];
+		a[j] = t;
+	}
+	t = a[l];
+	a[l] = a[j];
+	a[j] = t;
+	return j;
+}
+
+void quickSort(int a[], int l, int r) {
+	int j;
+
+	if (l < r) {
+		// divide and conquer
+		j = partition(a, l, r);
+		quickSort(a, l, j - 1);
+		quickSort(a, j + 1, r);
+	}
+}
+
+void findError(int aux[9]) {
 
 	int i;
 
-	for(i = 0; i < BSIZE; i++)
-		pthread_create(&(thr_lines[i]), NULL, &check_line_thr, board[i]);
+	//ordena o vetor
+	quickSort(aux, 0, 8);
 
-	for(i = 0; i < BSIZE; i++) {
+	//acha numeros repetidos e fora do intervalo
+	for (i = 0; i < 9; i++) {
+		if (aux[i] > 9 || aux[i] < 1) {
+			printf("Número %d fora do intervalo definido", aux[i]);
+		}
 
-		int pthread_result;
-		pthread_join(thr_lines[i], &pthread_result);
-
-		if(!pthread_result) {
-			printf("lines_false ");
-			return FALSE;
+		if (aux[i] == aux[i + 1]) {
+			printf("Número %d repetido", aux[i]);
 		}
 	}
 
-	return TRUE;
 }
 
-int check_columns(int board[BSIZE][BSIZE]){
-	return 0;
+void check_lines(int puzzle[BSIZE][BSIZE]) {
+	int row, col;
+	int aux[BSIZE];
+
+	for (row = 0; row < BSIZE; row++) {
+		for (col = 0; col < BSIZE; col++) {
+			aux[col] = puzzle[row][col];
+		}
+		findError(aux);
+	}
 }
 
-int check_blocks(int board[BSIZE][BSIZE]){
-	return 0;
+void check_columns(int puzzle[BSIZE][BSIZE]) {
+	int row, col;
+	int aux[BSIZE];
+
+	for (col = 0; col < BSIZE; col++) {
+		for (row = 0; row < BSIZE; row++) {
+			aux[row] = puzzle[row][col];
+		}
+		findError(aux);
+	}
 }
 
-void* check_line_thr(void* line[BSIZE]){
+void check_blocks(int puzzle[BSIZE][BSIZE]) {
 
-	int i, mask[BSIZE];
+	int i;
 
-	for(i = 0; i < BSIZE; i++)
-		mask[i] = FALSE;
+	int rowStart = 0, colStart = 0;
+	int aux[BSIZE];
 
-	for(i = 0; i < BSIZE; i++) {
-
-		int val = (int) line[i];
-
-		if(mask[val - 1]) {
-			printf("thr_false ");
-			pthread_exit(FALSE);
+	for (rowStart = 0; rowStart < 7; rowStart += 3) {
+		for (colStart = 0; colStart < 7; colStart += 3) {
+			for (i = 0; i < BSIZE; i++) {
+				aux[i] = puzzle[rowStart + (i % 3)][colStart + (i / 3)];
+			}
+			findError(aux);
 		}
 	}
-
-	pthread_exit(TRUE);
-}
-
-void* check_column_thr(int line[BSIZE]){
-	return 0;
-}
-
-void* check_block_thr(int line[BSIZE]){
-	return 0;
 }
