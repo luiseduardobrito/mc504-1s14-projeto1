@@ -32,11 +32,23 @@ int main() {
 	int cmd;
 	scanf("%d", &cmd);
 
+	char inputChar, emptyChar;
 	int puzzle[BSIZE][BSIZE], i, j;
 
+	// modo dica com o 'X'
 	for (i = 0; i < BSIZE; i++)
-		for (j = 0; j < BSIZE; j++)
-			scanf("%d", &puzzle[i][j]);
+		for (j = 0; j < BSIZE; j++) {
+
+			scanf("%c%c", &inputChar, &emptyChar);
+
+			if(inputChar == 'X' || inputChar == 'x') {
+				puzzle[i][j] = 0;
+			}
+
+			else {
+				puzzle[i][j] = inputChar - '0';
+			}
+		}
 
 	switch(cmd) {
 		case 1:
